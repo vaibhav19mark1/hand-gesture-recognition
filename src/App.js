@@ -5,15 +5,21 @@ import Webcam from "react-webcam";
 import "./App.css";
 import { drawHand } from "./utilities";
 import * as fp from "fingerpose";
-import thumbs_up from "./emogis/thumbs_up.png";
-import victory from "./emogis/victory.png";
+import thumbs_up from "./emojis/thumbs_up.png";
+import victory from "./emojis/victory.png";
+import thumbs_down from "./emojis/thumbs_down.png";
+import stop from "./emojis/stop.jpg";
+import solidarity from "./emojis/fist.png";
+import {thumbsDownGesture} from "./Thumbs_down"
+import { stopGesture } from "./Stop";
+import { solidarityGesture } from "./Solidarity";
 
 function App() {
   const webcamRef = useRef(null);
   const canvasRef = useRef(null);
 
   const [emoji, setEmoji] = useState(null);
-  const images = { thumbs_up: thumbs_up, victory: victory };
+  const images = { thumbs_up: thumbs_up, victory: victory, thumbs_down: thumbs_down, stop: stop, solidarity: solidarity};
 
   const runHandPose = async () => {
     const net = await handpose.load();
@@ -53,18 +59,15 @@ function App() {
         const GE = new fp.GestureEstimator([
           fp.Gestures.VictoryGesture,
           fp.Gestures.ThumbsUpGesture,
+          thumbsDownGesture,
+          stopGesture,
+          solidarityGesture
         ]);
 
         const gesture = await GE.estimate(hand[0].landmarks, 8);
-        console.log(gesture);
-
+        
         if (gesture.gestures !== undefined && gesture.gestures.length > 0) {
-          // const confidence = gesture.gestures.map(
-          //   (prediction) => prediction.confidence
-          // );
-          // const maxConfidence = confidence.indexOf(
-          //   Math.max.apply(null, confidence)
-          // );
+          console.log(gesture);
           setEmoji(gesture.gestures[0].name);
           console.log(emoji);
         }
